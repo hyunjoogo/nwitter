@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {doc, deleteDoc, updateDoc} from "firebase/firestore";
-import {dbService} from "../firebase";
+import {dbService, storageService} from "../firebase";
+import {ref, deleteObject} from "firebase/storage";
 
 
 const Nweet = ({nweetObj, isOwner}) => {
@@ -9,6 +10,9 @@ const Nweet = ({nweetObj, isOwner}) => {
   const onDeleteClick = async () => {
     const ok = window.confirm("이 nweet를 삭제할까요?");
     if (ok) {
+      if (nweetObj.attachmentUrl !== "") {
+        await deleteObject(ref(storageService, nweetObj.attachmentUrl));
+      }
       await deleteDoc(doc(dbService, "nweets", `${nweetObj.id}`), console.log);
     }
   }
@@ -22,7 +26,7 @@ const Nweet = ({nweetObj, isOwner}) => {
 
 // Set the "capital" field of the city 'DC'
     await updateDoc(washingtonRef, {
-      text : newNweet,
+      text: newNweet,
     });
     setEditing(false);
   }
@@ -44,7 +48,11 @@ const Nweet = ({nweetObj, isOwner}) => {
         </>
       ) : (
         <>
-          <h4>{nweetObj.text}</h4>
+          <div>
+            <h4>{nweetObj.text}</h4>
+            {nweetObj.attachmentUrl &&
+            <img src={nweetObj.attachmentUrl} alt="user's attachment" width="50px" height="50px"/>}
+          </div>
           {isOwner && <>
             <button onClick={onDeleteClick}>Delete Nweet</button>
             <button onClick={toggleEditing}>Edit Nweet</button>
