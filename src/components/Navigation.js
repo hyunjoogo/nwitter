@@ -3,7 +3,7 @@ import {Link, useNavigate} from "react-router-dom";
 import {signOut} from "firebase/auth";
 import {authService} from "../firebase";
 
-const Navigation = () => {
+const Navigation = ({userObj}) => {
   const navigate = useNavigate();
   const onSignOut = () => {
     signOut(authService).then(() => navigate("/"))
@@ -12,7 +12,7 @@ const Navigation = () => {
     <nav>
       <ul>
         <li><Link to="/">Home</Link></li>
-        <li><Link to="/profile">My Profile</Link></li>
+        <li><Link to="/profile">{userObj.displayName}의 Profile</Link></li>
       </ul>
       <ul>
         <li>
